@@ -1,0 +1,10 @@
+syntax = "proto3";
+package yogeshguptakaithal.testchain.testchain;
+
+option go_package = "github.com/yogeshguptakaithal/testchain/x/testchain/types";
+
+message Comment {
+  uint64 id = 1;
+  string title = 2; 
+  string creator = 3;
+}

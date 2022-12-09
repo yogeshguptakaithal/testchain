@@ -7,10 +7,43 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
+import { MsgCreateComment } from "./types/testchain/testchain/tx";
+import { MsgUpdateComment } from "./types/testchain/testchain/tx";
+import { MsgDeleteComment } from "./types/testchain/testchain/tx";
 
 
-export {  };
+export { MsgCreateComment, MsgUpdateComment, MsgDeleteComment };
 
+type sendMsgCreateCommentParams = {
+  value: MsgCreateComment,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateCommentParams = {
+  value: MsgUpdateComment,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteCommentParams = {
+  value: MsgDeleteComment,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgCreateCommentParams = {
+  value: MsgCreateComment,
+};
+
+type msgUpdateCommentParams = {
+  value: MsgUpdateComment,
+};
+
+type msgDeleteCommentParams = {
+  value: MsgDeleteComment,
+};
 
 
 export const registry = new Registry(msgTypes);
@@ -30,6 +63,72 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
+		async sendMsgCreateComment({ value, fee, memo }: sendMsgCreateCommentParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateComment: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateComment({ value: MsgCreateComment.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCreateComment: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateComment({ value, fee, memo }: sendMsgUpdateCommentParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateComment: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateComment({ value: MsgUpdateComment.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateComment: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeleteComment({ value, fee, memo }: sendMsgDeleteCommentParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeleteComment: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeleteComment({ value: MsgDeleteComment.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeleteComment: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgCreateComment({ value }: msgCreateCommentParams): EncodeObject {
+			try {
+				return { typeUrl: "/yogeshguptakaithal.testchain.testchain.MsgCreateComment", value: MsgCreateComment.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateComment: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateComment({ value }: msgUpdateCommentParams): EncodeObject {
+			try {
+				return { typeUrl: "/yogeshguptakaithal.testchain.testchain.MsgUpdateComment", value: MsgUpdateComment.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateComment: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeleteComment({ value }: msgDeleteCommentParams): EncodeObject {
+			try {
+				return { typeUrl: "/yogeshguptakaithal.testchain.testchain.MsgDeleteComment", value: MsgDeleteComment.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeleteComment: Could not create message: ' + e.message)
+			}
+		},
 		
 	}
 };
